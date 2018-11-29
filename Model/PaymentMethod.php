@@ -32,9 +32,9 @@ use PagSeguro\Domains\Requests\Payment as PS_Payment;
 class PaymentMethod
 {
     /**
-     * @var \Magento\Checkout\Model\Session
+     * @var \Magento\Sales\Model\Order
      */
-    protected $_checkoutSession;
+    protected $_lastRealOrder;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -60,14 +60,14 @@ class PaymentMethod
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
-        \Magento\Checkout\Model\Session $checkoutSession,
+        \Magento\Sales\Model\Order $lastRealOrder,
         \Magento\Directory\Api\CountryInformationAcquirerInterface $countryInformation,
 		\Magento\Framework\Module\ModuleList $moduleList
     ) {
         /** @var \Magento\Framework\App\Config\ScopeConfigInterface _scopeConfig */
         $this->_scopeConfig = $scopeConfigInterface;
-        /** @var  _checkoutSession */
-        $this->_checkoutSession = $checkoutSession;
+        /** @var  \Magento\Sales\Model\Order */
+        $this->_lastRealOrder = $lastRealOrder;
         /** @var \Magento\Checkout\Model\Session _countryInformation */
         $this->_countryInformation = $countryInformation;
         /** @var \Magento\Directory\Api\CountryInformationAcquirerInterface _library */
@@ -85,8 +85,7 @@ class PaymentMethod
         // Order ID
         $this->_paymentRequest->setReference($this->getOrderStoreReference());
         // Cart discount
-        $lastRealOrder = $this->_checkoutSession->getLastRealOrder();
-        $this->_paymentRequest->setExtraAmount(round($lastRealOrder->getDiscountAmount(), 2));
+        $this->_paymentRequest->setExtraAmount(round($this->_lastRealOrder->getDiscountAmount(), 2));
         // PagSeguro Payment Method discounts
         $this->setPagSeguroDiscountsByPaymentMethod();
         //Shipping
@@ -121,7 +120,7 @@ class PaymentMethod
      */
     private function setItemsInformation()
     {
-        foreach ($this->_checkoutSession->getLastRealOrder()->getAllVisibleItems() as $product) {
+        foreach ($this->_lastRealOrder->getAllVisibleItems() as $product) {
             $this->_paymentRequest->addItems()->withParameters(
                 $product->getProduct()->getId(), //id
                 \UOL\PagSeguro\Helper\Data::fixStringLength($product->getName(), 255), //description
@@ -136,7 +135,7 @@ class PaymentMethod
      */
     private function setSenderInformation()
     {
-        $senderName = $this->_checkoutSession->getLastRealOrder()->getCustomerName();
+        $senderName = $this->_lastRealOrder->getCustomerName();
         // If Guest
         if (
             $senderName == (string)__('Guest')
@@ -148,8 +147,7 @@ class PaymentMethod
             $senderName = $address->getFirstname() . ' ' . $address->getLastname();
         }
         $this->_paymentRequest->setSender()->setName($senderName);
-        $this->_paymentRequest->setSender()->setEmail($this->_checkoutSession
-            ->getLastRealOrder()->getCustomerEmail());
+        $this->_paymentRequest->setSender()->setEmail($this->_lastRealOrder->getCustomerEmail());
         $this->setSenderPhone();
         
     }
@@ -158,11 +156,11 @@ class PaymentMethod
      */
     private function setShippingInformation()
     {
-        if ($this->_checkoutSession->getLastRealOrder()->getIsVirtual()) {
+        if ($this->_lastRealOrder->getIsVirtual()) {
             $this->_paymentRequest->setShipping()->setAddressRequired()->withParameters('false');
         } else {
             $this->_paymentRequest->setShipping()->setAddressRequired()->withParameters('true');
-            $shipping = $this->_checkoutSession->getLastRealOrder()->getShippingAddress();
+            $shipping = $this->_lastRealOrder->getShippingAddress();
             if ($shipping) {
                 if (count($shipping->getStreet()) === 4) {
                     $this->_paymentRequest->setShipping()->setAddress()->withParameters(
@@ -222,7 +220,7 @@ class PaymentMethod
      */
     private function getShippingAmount()
     {
-        return $this->_checkoutSession->getLastRealOrder()->getBaseShippingAmount();
+        return $this->_lastRealOrder->getBaseShippingAmount();
     }
 
     /**
@@ -246,7 +244,7 @@ class PaymentMethod
     {
         return \UOL\PagSeguro\Helper\Data::getOrderStoreReference(
             $this->_scopeConfig->getValue('pagseguro/store/reference'),
-            $this->_checkoutSession->getLastRealOrder()->getEntityId()
+            $this->_lastRealOrder->getEntityId()
         );
     }
     
@@ -296,7 +294,7 @@ class PaymentMethod
     {
         $addressData = ($this->getBillingAddress())
             ? $this->getBillingAddress()
-            : $this->_checkoutSession->getLastRealOrder()->getShippingAddress();
+            : $this->_lastRealOrder->getShippingAddress();
 
         if (! empty($addressData['telephone'])) {
             $phone = \UOL\PagSeguro\Helper\Data::formatPhone($addressData['telephone']);
@@ -314,7 +312,7 @@ class PaymentMethod
      */
     private function getBillingAddress()
     {
-        return $this->_checkoutSession->getLastRealOrder()->getBillingAddress();
+        return $this->_lastRealOrder->getBillingAddress();
     }
 
 	/**
