@@ -197,7 +197,8 @@ class CreditCardMethod
     {
         $this->_paymentRequest->setInstallment()->withParameters(
             $this->_data['installment']['quantity'],
-            $this->_data['installment']['amount']
+            $this->_data['installment']['amount'],
+            $this->_data['installment']['no_interest_quantity']
         );
     }
     
