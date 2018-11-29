@@ -7,7 +7,7 @@
 	],
 	"require": {
 	    "php": ">=5.5",
-	    "pagseguro/pagseguro-php-sdk": "4.*"
+	    "pagseguro/pagseguro-php-sdk": "5.*"
 	},
 	"autoload": {
 	  "files": [
@@ -16,5 +16,11 @@
 	  "psr-4": {
 	    "UOL\\PagSeguro\\": ""
 	  }
-	}
+	},
+	"repositories": [
+		{
+			"type": "git",
+			"url": "https://github.com/ianitsky/pagseguro-php-sdk.git"
+		}
+	]
 }
