@@ -37,15 +37,15 @@ class NotificationMethod
     /**
      * @var \UOL\PagSeguro\Helper\Library
      */
-    private $_library;
+    protected $_library;
     /**
      * @var \UOL\PagSeguro\Helper\Data
      */
-    private $_helperData;
+    protected $_helperData;
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
      */
-    private $_order;
+    protected $_order;
     /**
      * @var Magento\Sales\Model\ResourceModel\Grid;
      */
@@ -61,16 +61,14 @@ class NotificationMethod
         \Magento\Sales\Api\OrderRepositoryInterface $order,
         \Magento\Sales\Api\Data\OrderStatusHistoryInterface $history,
         \Magento\Framework\Module\ModuleList $moduleList,
-        \Magento\Framework\Model\ResourceModel\Db\Context $context
+        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        Library $library
     ) {
         //dependency injection
         $this->_order = $order;
         $this->_history = $history;
         // create required objects
-        $this->_library = new Library(
-            $scopeConfigInterface,
-            $moduleList
-        );
+        $this->_library = $library;
         $this->_helperData = new Data();
         $this->_grid = new Grid($context, 'pagseguro_orders', 'sales_order_grid', 'order_id');
     }
@@ -142,7 +140,7 @@ class NotificationMethod
      * @throws \Exception
      * @throws \PagSeguroServiceException
      */
-    private function getTransaction()
+    protected function getTransaction()
     {
         return \PagSeguro\Services\Transactions\Notification::check(
             $this->_library->getPagSeguroCredentials()

@@ -105,7 +105,7 @@ class CreatePagSeguroOrder implements ObserverInterface
             $this->saveOrderAndEnvironment($orderId, $environment);
 
             //$this->getEnvironmentName($environment);
-            $this->updateSalesOrderGridEnvironment($orderId, $environment);
+            //$this->updateSalesOrderGridEnvironment($orderId, $environment);
         }
 
         return $this;

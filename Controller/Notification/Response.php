@@ -29,14 +29,17 @@ namespace UOL\PagSeguro\Controller\Notification;
  */
 class Response extends \Magento\Framework\App\Action\Action
 {
+    protected $_notificationMethod;
 
     /**
      * Response constructor.
      * @param \Magento\Framework\App\Action\Context $context
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context
+        \Magento\Framework\App\Action\Context $context,
+        \UOL\PagSeguro\Model\NotificationMethod $notificationMethod
     ) {
+        $this->_notificationMethod = $notificationMethod;
         parent::__construct($context);
     }
 
@@ -47,14 +50,7 @@ class Response extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         try {
-            $nofitication = new \UOL\PagSeguro\Model\NotificationMethod(
-                $this->_objectManager->create('\Magento\Framework\App\Config\ScopeConfigInterface'),
-                $this->_objectManager->create('\Magento\Sales\Api\OrderRepositoryInterface'),
-                $this->_objectManager->create('\Magento\Sales\Api\Data\OrderStatusHistoryInterface'),
-                $this->_objectManager->create('Magento\Framework\Module\ModuleList'),
-                $this->_objectManager->create('\Magento\Framework\Model\ResourceModel\Db\Context')
-            );
-            $nofitication->init();
+            $this->_notificationMethod->init();
         } catch (\Exception $ex) {
             //log already written in your pagseguro log file if pagseguro log is enabled in admin
             exit;

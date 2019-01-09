@@ -21,61 +21,63 @@
  *  @license   http://www.apache.org/licenses/LICENSE-2.0
  */
 
-namespace UOL\PagSeguro\Controller\Adminhtml\Refund;
+namespace UOL\PagSeguro\Controller\Adminhtml\Transactions;
 
-use Magento\Backend\App\Action\Context;
 use UOL\PagSeguro\Controller\Ajaxable;
-use UOL\PagSeguro\Model\Transactions\Methods\Refund as RefundMethod;
+use UOL\PagSeguro\Model\Transactions\Methods\Transactions;
 
 /**
- * Class Conciliation
+ * Class Transaction
  * @package UOL\PagSeguro\Controller\Adminhtml
  */
-class Refund extends Ajaxable
+class Transaction extends Ajaxable
 {
 
     /**
-     * Refund constructor.
+     * Transaction constructor.
      *
-     * @param Context $context
+     * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
      */
     public function __construct(
-        Context $context,
+        \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
     ) {
         parent::__construct($context, $resultJsonFactory);
     }
 
     /**
-     * @return void
+     * @return \Magento\Framework\Controller\Result\Json
      */
     public function execute()
     {
-
-        $refund = new RefundMethod(
+        $transactions = new Transactions(
             $this->_objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface'),
-            $this->_objectManager->create('Magento\Framework\App\ResourceConnection'),
+            $this->_objectManager->create('\Magento\Framework\App\ResourceConnection'),
             $this->_objectManager->create('Magento\Framework\Model\ResourceModel\Db\Context'),
             $this->_objectManager->create('Magento\Backend\Model\Session'),
             $this->_objectManager->create('Magento\Sales\Model\Order'),
             $this->_objectManager->create('UOL\PagSeguro\Helper\Library'),
             $this->_objectManager->create('UOL\PagSeguro\Helper\Crypt')
         );
+
         try {
-            return $this->whenSuccess($refund->execute($this->getRequest()->getParam('data'), $this->getRequest()->getParam('value')));
+            return $this->whenSuccess(
+                $transactions->execute(
+                    $this->getRequest()->getParam('transaction') )
+            );
         } catch (\Exception $exception) {
             return $this->whenError($exception->getMessage());
         }
     }
 
     /**
-     * Refund access rights checking
+     * Transactions access rights checking
      *
      * @return bool
      */
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('UOL_PagSeguro::Refund');
+        return $this->_authorization->isAllowed('UOL_PagSeguro::Transactions');
     }
 }

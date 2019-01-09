@@ -75,7 +75,7 @@ class Request extends \Magento\Framework\App\Action\Action
         /** @var \UOL\PagSeguro\Model\PaymentMethod payment */
         $this->_payment = new PaymentMethod(
             $this->_objectManager->create('\Magento\Framework\App\Config\ScopeConfigInterface'),
-            $this->_checkoutSession,
+            $this->_checkoutSession->getLastRealOrder(),
             $this->_objectManager->create('\Magento\Directory\Api\CountryInformationAcquirerInterface'),
             $this->_objectManager->create('Magento\Framework\Module\ModuleList')
         );

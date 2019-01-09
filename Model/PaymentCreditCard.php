@@ -133,6 +133,10 @@ class PaymentCreditCard extends \Magento\Payment\Model\Method\AbstractMethod
             $info->setAdditionalInformation('credit_card_installment_value', $data->getData('additional_data')['credit_card_installment_value']);
         }
 
+        if (isset($data->getData('additional_data')['credit_card_no_interest'])) {
+            $info->setAdditionalInformation('credit_card_no_interest', $data->getData('additional_data')['credit_card_no_interest']);
+        }
+
         return $this;
     }
 
