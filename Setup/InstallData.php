@@ -47,26 +47,26 @@ class InstallData implements InstallDataInterface
          * PagSeguro Order Status
          */
         $statuses = [
-            'pagseguro_iniciado'  => __('PagSeguro Iniciado'),
-            'pagseguro_aguardando_pagamento' => __('PagSeguro Aguardando Pagamento'),
-            'pagseguro_cancelada' => __('PagSeguro Cancelada'),
-            'pagseguro_chargeback_debitado'  => __('PagSeguro Chargeback Debitado'),
-            'pagseguro_devolvida'  => __('PagSeguro Devolvida'),
-            'pagseguro_disponivel'  => __('PagSeguro Disponível'),
-            'pagseguro_em_analise'  => __('PagSeguro Em Análise'),
-            'pagseguro_em_contestacao'  => __('PagSeguro Em Contestação'),
-            'pagseguro_em_disputa'  => __('PagSeguro Em Disputa'),
-            'pagseguro_paga'  => __('PagSeguro Paga')
+            'pagseguro_iniciado'  => ['label' => __('PagSeguro Iniciado'), 'state' => 'new'],
+            'pagseguro_aguardando_pagamento' => ['label' => __('PagSeguro Aguardando Pagamento'), 'state' => 'pending_payment'],
+            'pagseguro_cancelada' => ['label' => __('PagSeguro Cancelada'), 'state' => 'canceled'],
+            'pagseguro_chargeback_debitado'  => ['label' => __('PagSeguro Chargeback Debitado'), 'state' => 'closed'],
+            'pagseguro_devolvida'  => ['label' => __('PagSeguro Devolvida'), 'state' => 'closed'],
+            'pagseguro_disponivel'  => ['label' => __('PagSeguro Disponível'), 'state' => 'complete'],
+            'pagseguro_em_analise'  => ['label' => __('PagSeguro Em Análise'), 'state' => 'payment_review'],
+            'pagseguro_em_contestacao'  => ['label' => __('PagSeguro Em Contestação'), 'state' => 'holded'],
+            'pagseguro_em_disputa'  => ['label' => __('PagSeguro Em Disputa'), 'state' => 'holded'],
+            'pagseguro_paga'  => ['label' => __('PagSeguro Paga'), 'state' => 'complete'],
         ];
 
         foreach ($statuses as $code => $info) {
             $status[] = [
                 'status' => $code,
-                'label' => $info
+                'label' => $info['label']
             ];
             $state[] = [
                 'status' => $code,
-                'state' => 'new',
+                'state' => $info['state'],
                 'is_default' => 0,
                 'visible_on_front' => '1'
             ];
