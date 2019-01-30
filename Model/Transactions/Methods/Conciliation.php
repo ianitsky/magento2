@@ -193,7 +193,9 @@ class Conciliation extends Method
     private function addStatusToOrder($id, $status)
     {
         $order = $this->_order->load($id);
-        $order->addStatusToHistory($this->getStatusFromPaymentKey($status), null, true);
+        $status = $this->getStatusFromPaymentKey($status);
+        $order->addStatusToHistory($status, null, true);
+        $order->setState($this->getStateFromStatus($status));
         $order->save();
     }
 

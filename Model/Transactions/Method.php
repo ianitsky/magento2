@@ -255,6 +255,15 @@ abstract class Method
      * @param $status
      * @return bool|string
      */
+    protected function getStateFromStatus($status)
+    {
+        return \UOL\PagSeguro\Helper\Data::getStateFromStatus($status);
+    }
+
+    /**
+     * @param $status
+     * @return bool|string
+     */
     protected function getStatusString($status)
     {
         return \UOL\PagSeguro\Helper\Data::getPaymentStatusToString($status);

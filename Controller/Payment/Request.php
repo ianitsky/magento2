@@ -45,7 +45,10 @@ class Request extends \Magento\Framework\App\Action\Action
      * @var \UOL\PagSeguro\Model\PaymentMethod
      */
     private $_payment;
-    
+
+    /**
+     * @var \Magento\Sales\Model\Order
+     */
     private $order;
     
     private $orderId;
@@ -243,6 +246,7 @@ class Request extends \Magento\Framework\App\Action\Action
             );
             /** change payment status in magento */
             $order->addStatusToHistory('pagseguro_cancelada', null, true);
+            $order-setState($this->helperData()::getStateFromStatus('pagseguro_cancelada'));
             /** save order */
             $order->save();
 
@@ -291,6 +295,7 @@ class Request extends \Magento\Framework\App\Action\Action
     {
         /** change payment status in magento */
         $this->order->addStatusToHistory($status, null, true);
+        $this->order->setState($this->helperData()::getStateFromStatus($status));
         /** save order */
         $this->order->save();
     }

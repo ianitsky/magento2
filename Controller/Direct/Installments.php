@@ -211,6 +211,7 @@ class Installments extends \Magento\Framework\App\Action\Action
     {
         /** change payment status in magento */
         $this->order->addStatusToHistory($status, null, true);
+        $this->order->setState($this->helperData()::getStateFromStatus($status));
 
         /** save order */
         $this->order->save();

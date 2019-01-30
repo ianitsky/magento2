@@ -46,6 +46,11 @@ class Cancel extends \Magento\Framework\App\Action\Action
     protected $_checkoutSession;
 
     /**
+     * @var \UOL\PagSeguro\Helper\Data
+     */
+    protected $_helperData;
+
+    /**
      * Checkout constructor.
      *
      * @param \Magento\Framework\App\Action\Context $context
@@ -53,12 +58,13 @@ class Cancel extends \Magento\Framework\App\Action\Action
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
+        \UOL\PagSeguro\Helper\Data $helperData
     ) {
         parent::__construct($context);
         /** @var  \Magento\Framework\View\Result\PageFactory _resultPageFactory*/
         $this->_resultPageFactory = $resultPageFactory;
-
+        $this->_helperData = $helperData;
     }
     /**
      * Show cancel page
@@ -76,6 +82,7 @@ class Cancel extends \Magento\Framework\App\Action\Action
 
         /** change payment status in magento */
         $order->addStatusToHistory('pagseguro_cancelada', null, true);
+        $order->setState($this->_helperData::getStateFromStatus('pagseguro_cancelada'));
         /** save order */
         $order->save();
 

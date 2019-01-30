@@ -23,6 +23,8 @@
 
 namespace UOL\PagSeguro\Helper;
 
+use \Magento\Sales\Model\Order;
+
 /**
  * Class Data
  * @package UOL\PagSeguro\Helper
@@ -35,17 +37,17 @@ class Data
      * @enum
      */
     private static $statusList = array(
-        0 => "pagseguro_iniciado",
-        1 => "pagseguro_aguardando_pagamento",
-        2 => "pagseguro_em_analise",
-        3 => "pagseguro_paga",
-        4 => "pagseguro_disponivel",
-        5 => "pagseguro_em_disputa",
-        6 => "pagseguro_devolvida",
-        7 => "pagseguro_cancelada",
-        8 => "pagseguro_chargeback_debitado",
-        9 => "pagseguro_em_contestacao",
-        10 => "partially_refunded"
+        0 => ['status' => 'pagseguro_iniciado', 'state' => Order::STATE_NEW],
+        1 => ['status' => 'pagseguro_aguardando_pagamento', 'state' => Order::STATE_PENDING_PAYMENT],
+        2 => ['status' => 'pagseguro_em_analise', 'state' => Order::STATE_PAYMENT_REVIEW],
+        3 => ['status' => 'pagseguro_paga', 'state' => Order::STATE_COMPLETE],
+        4 => ['status' => 'pagseguro_disponivel', 'state' => Order::STATE_COMPLETE],
+        5 => ['status' => 'pagseguro_em_disputa', 'state' => Order::STATE_HOLDED],
+        6 => ['status' => 'pagseguro_devolvida', 'state' => Order::STATE_CLOSED],
+        7 => ['status' => 'pagseguro_cancelada', 'state' => Order::STATE_CANCELED],
+        8 => ['status' => 'pagseguro_chargeback_debitado', 'state' => Order::STATE_CLOSED],
+        9 => ['status' => 'pagseguro_em_contestacao', 'state' => Order::STATE_HOLDED],
+        10 => ['status' => 'partially_refunded', 'state' => Order::STATE_COMPLETE],
     );
 
     /**
@@ -199,7 +201,7 @@ class Data
     public static function getStatusFromKey($key)
     {
         if (array_key_exists($key, self::$statusList)) {
-            return self::$statusList[$key];
+            return self::$statusList[$key]['status'];
         }
         return false;
     }
@@ -211,7 +213,24 @@ class Data
      */
     public static function getKeyFromStatus($status)
     {
-        return array_search($status, self::$statusList);
+        foreach (self::$statusList as $key => $statusList) {
+            if ($statusList['status'] == $status) {
+                return $key;
+            }
+        }
+    }
+
+    /**
+     * @param $status
+     * @return mixed
+     */
+    public static function getStateFromStatus($status)
+    {
+        foreach (self::$statusList as $key => $statusList) {
+            if ($statusList['status'] == $status) {
+                return $statusList['state'];
+            }
+        }
     }
 
     /**
