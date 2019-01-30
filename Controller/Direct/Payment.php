@@ -41,6 +41,8 @@ class Payment extends \Magento\Framework\App\Action\Action
     /** @var \UOL\PagSeguro\Helper\Library */
     protected $_library;
 
+    protected $_helperData;
+
     /**
      * Checkout constructor.
      * @param \Magento\Framework\App\Action\Context $context
@@ -48,7 +50,8 @@ class Payment extends \Magento\Framework\App\Action\Action
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
+        \UOL\PagSeguro\Helper\Data $helperData
     ) {
 
         parent::__construct($context);
@@ -58,6 +61,8 @@ class Payment extends \Magento\Framework\App\Action\Action
         $this->_checkoutSession = $this->_objectManager->create('\Magento\Checkout\Model\Session');
         /** @var  _library */
         $this->_library = $this->_objectManager->create('\UOL\PagSeguro\Helper\Library');
+
+        $this->_helperData = $helperData;
     }
 
     /**
@@ -85,6 +90,7 @@ class Payment extends \Magento\Framework\App\Action\Action
             );
             /** change payment status in magento */
             $order->addStatusToHistory('pagseguro_cancelada', null, true);
+            $order->setState($this->_helperData::getStateFromStatus('pagseguro_cancelada'));
             /** save order */
             $order->save();
 

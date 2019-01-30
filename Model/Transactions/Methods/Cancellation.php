@@ -79,6 +79,11 @@ class Cancellation extends Method
     protected $_library;
 
     /**
+     * @var \UOL\PagSeguro\Helper\Data
+     */
+    protected $_helperData;
+
+    /**
      * @var \UOL\PagSeguro\Helper\Crypt
      */
     protected $_crypt;
@@ -100,6 +105,7 @@ class Cancellation extends Method
         \Magento\Sales\Model\Order $order,
         \UOL\PagSeguro\Helper\Library $library,
         \UOL\PagSeguro\Helper\Crypt $crypt,
+        \UOL\PagSeguro\Helper\Data $helperData,
         $days = null
     ) {
         /** @var \Magento\Framework\App\Config\ScopeConfigInterface _scopeConfig */
@@ -114,6 +120,8 @@ class Cancellation extends Method
         $this->_library = $library;
         /** @var \UOL\PagSeguro\Helper\Crypt _crypt */
         $this->_crypt = $crypt;
+        /** @var \UOL\PagSeguro\Helper\Data _helperData */
+        $this->_helperData = $helperData;
         /** @var int _days */
         $this->_days = $days;
         /** @var \Magento\Sales\Model\ResourceModel\Grid _salesGrid */
@@ -181,6 +189,7 @@ class Cancellation extends Method
     {
         $order = $this->_order->load($id);
         $order->addStatusToHistory($status, null, true);
+        $order->setState($this->_helperData::getStateFromStatus('pagseguro_cancelada'));
         $order->save();
     }
 

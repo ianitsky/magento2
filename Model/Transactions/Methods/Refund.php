@@ -84,6 +84,11 @@ class Refund extends Method
     protected $_crypt;
 
     /**
+     * @var \UOL\PagSeguro\Helper\Data
+     */
+    protected $_helperData;
+
+    /**
      * Conciliation constructor.
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface
@@ -100,6 +105,7 @@ class Refund extends Method
         \Magento\Sales\Model\Order $order,
         \UOL\PagSeguro\Helper\Library $library,
         \UOL\PagSeguro\Helper\Crypt $crypt,
+        \UOL\PagSeguro\Helper\Data $helperData,
         $days = null
     ) {
         /** @var \Magento\Framework\App\Config\ScopeConfigInterface _scopeConfig */
@@ -115,6 +121,8 @@ class Refund extends Method
         $this->_library = $library;
         /** @var \UOL\PagSeguro\Helper\Crypt _crypt */
         $this->_crypt = $crypt;
+        /** @var \UOL\PagSeguro\Helper\Data _helperData */
+        $this->_helperData = $helperData;
         /** @var int _days */
         $this->_days = $days;
         /** @var \Magento\Sales\Model\ResourceModel\Grid _salesGrid */
@@ -194,6 +202,7 @@ class Refund extends Method
     {
         $order = $this->_order->load($id);
         $order->addStatusToHistory($status, null, true);
+        $order->setState($this->_helperData::getStateFromStatus($status));
         $order->save();
     }
 
@@ -408,7 +417,9 @@ class Refund extends Method
     {
         $notify = true;
         $order = $this->_order->load($orderId);
-        $order->addStatusToHistory($this->getStatusFromPaymentKey($orderStatus), $comment, $notify);
+        $status = $this->getStatusFromPaymentKey($orderStatus);
+        $order->addStatusToHistory($status, $comment, $notify);
+        $order->setState($this->getStateFromStatus($status));
         $order->save();
     }
 }

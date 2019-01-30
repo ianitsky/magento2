@@ -227,6 +227,7 @@ class CreditCard extends \Magento\Framework\App\Action\Action
         $order = $this->loadOrder();
         /** change payment status in magento */
         $order->addStatusToHistory($status, null, true);
+        $order->setState($this->helperData()::getStateFromStatus($status));
         /** save order */
         $order->save();
     }

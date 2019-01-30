@@ -111,6 +111,7 @@ class NotificationMethod
             $orderId = $order->getId();
 
             $order->setStatus($status);
+            $order->setState($this->_helperData::getStateFromStatus($status));
             $order->setStatusHistories($history);
             $order->save();
             

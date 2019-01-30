@@ -41,7 +41,7 @@ class Boleto extends \Magento\Framework\App\Action\Action
     /** @var \Magento\Framework\Controller\Result\Json  */
     protected $result;
 
-    /** @var Magento\Sales\Model\Order */
+    /** @var \Magento\Sales\Model\Order */
     protected $order;
 
     /**
@@ -223,6 +223,7 @@ class Boleto extends \Magento\Framework\App\Action\Action
     {
         /** change payment status in magento */
         $this->order->addStatusToHistory($status, null, true);
+        $this->order->setState($this->helperData()::getStateFromStatus($status));
         /** save order */
         $this->order->save();
     }
