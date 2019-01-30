@@ -52,13 +52,16 @@ class Checkout extends \Magento\Framework\App\Action\Action
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
+        $checkoutSession = $this->_objectManager->create('\Magento\Checkout\Model\Session');
         $this->payment = new PaymentMethod(
             $this->_objectManager
                 ->create('\Magento\Framework\App\Config\ScopeConfigInterface'),
-            $this->_objectManager->create('\Magento\Checkout\Model\Session'),
+            //$this->_objectManager->create('\Magento\Checkout\Model\Session'),
+            //$this->_objectManager->create('\Magento\Sales\Model\Order'),
+            $checkoutSession->getLastRealOrder(),
             $this->_objectManager
                 ->create('\Magento\Directory\Api\CountryInformationAcquirerInterface'),
-			$this->_objectManager->create('Magento\Framework\Module\ModuleList')
+            $this->_objectManager->create('Magento\Framework\Module\ModuleList')
         );
     }
 
@@ -70,7 +73,11 @@ class Checkout extends \Magento\Framework\App\Action\Action
     {
         $result = $this->payment->createPaymentRequest();
         $resultPage = $this->resultPageFactory->create();
-        $code = $result->getCode();
+        if (is_string($result)) {
+            $code = $this->getCodeFromURL($result);
+        } else {
+            $code = $result->getCode();
+        }
         $resultPage->getLayout()->getBlock('pagseguro.payment.checkout')
             ->setCode($code);
         $resultPage->getLayout()->getBlock('pagseguro.payment.checkout')
@@ -79,6 +86,19 @@ class Checkout extends \Magento\Framework\App\Action\Action
             ->setPaymentUrl($this->payment->checkoutUrl($code, 'paymentService'));
 
         return $resultPage;
+    }
+
+    public function getCodeFromURL($url)
+    {
+        // url example https://pagseguro.uol.com.br/v2/checkout/payment.html?code=1BDE2554BCBC88DCC4059FB3377070A1
+
+        $result = explode("code=", $url);
+
+        if (isset($result[1])) {
+            return $result[1];
+        }
+
+        return null;
     }
 
     /**

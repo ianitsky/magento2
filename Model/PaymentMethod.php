@@ -40,7 +40,7 @@ class PaymentMethod
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
      */
     protected $_scopeConfig;
-    
+
     /**
      *
      * @var \PagSeguro\Domains\Requests\Payment
@@ -62,7 +62,7 @@ class PaymentMethod
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
         \Magento\Sales\Model\Order $lastRealOrder,
         \Magento\Directory\Api\CountryInformationAcquirerInterface $countryInformation,
-		\Magento\Framework\Module\ModuleList $moduleList
+        \Magento\Framework\Module\ModuleList $moduleList
     ) {
         /** @var \Magento\Framework\App\Config\ScopeConfigInterface _scopeConfig */
         $this->_scopeConfig = $scopeConfigInterface;
@@ -71,7 +71,7 @@ class PaymentMethod
         /** @var \Magento\Checkout\Model\Session _countryInformation */
         $this->_countryInformation = $countryInformation;
         /** @var \Magento\Directory\Api\CountryInformationAcquirerInterface _library */
-		$this->_library = new Library($scopeConfigInterface, $moduleList);
+        $this->_library = new Library($scopeConfigInterface, $moduleList);
         /** @var  \Magento\Framework\Module\ModuleList _paymentRequest */
         $this->_paymentRequest = new PS_Payment();
     }
@@ -141,7 +141,7 @@ class PaymentMethod
             $senderName == (string)__('Guest')
             || $senderName == 'Convidado'
             || $senderName == 'Visitante'
-                
+
         ) {
             $address = $this->getBillingAddress();
             $senderName = $address->getFirstname() . ' ' . $address->getLastname();
@@ -149,7 +149,7 @@ class PaymentMethod
         $this->_paymentRequest->setSender()->setName($senderName);
         $this->_paymentRequest->setSender()->setEmail($this->_lastRealOrder->getCustomerEmail());
         $this->setSenderPhone();
-        
+
     }
     /**
      * Get the shipping information and set in the attribute $_paymentRequest
@@ -247,7 +247,7 @@ class PaymentMethod
             $this->_lastRealOrder->getEntityId()
         );
     }
-    
+
     /**
      * Get a brazilian region name and return the abbreviation if it exists
      *
@@ -266,7 +266,7 @@ class PaymentMethod
             $regionAbbreviation->getType($shipping->getRegion()) :
             $shipping->getRegion();
     }
-    
+
     /**
      * Get the store notification url
      *
@@ -276,7 +276,7 @@ class PaymentMethod
     {
         return $this->_scopeConfig->getValue('payment/pagseguro/notification');
     }
-    
+
     /**
      * Get the store redirect url
      *
@@ -286,7 +286,7 @@ class PaymentMethod
     {
         return $this->_scopeConfig->getValue('payment/pagseguro/redirect');
     }
-    
+
     /**
      * Set the sender phone if it exist
      */
@@ -304,7 +304,7 @@ class PaymentMethod
             );
         }
     }
-    
+
     /**
      * Get the billing address data of the Order
      *
@@ -315,9 +315,9 @@ class PaymentMethod
         return $this->_lastRealOrder->getBillingAddress();
     }
 
-	/**
+    /**
      * Get the country name based on the $countryId
-     * 
+     *
      * @param string $countryId
      * @return string
      */
