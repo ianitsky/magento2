@@ -1,9 +1,6 @@
 Módulo de integração PagSeguro para Magento 2.x
 ====================================================
 
-[![Code Climate](https://codeclimate.com/github/pagseguro/magento2/badges/gpa.svg)](https://codeclimate.com/github/pagseguro/magento2)
-
----
 Descrição
 ---------
 ---
@@ -31,9 +28,19 @@ Navegue até o diretório raíz da sua instalação do Magento 2 e siga os segui
 
 > A instalação do módulo é feita utilizando o Composer. Para baixar e instalar o Composer no seu ambiente acesse https://getcomposer.org/download/ e caso tenha dúvidas de como utilizá-lo consulte a [documentação oficial do Composer](https://getcomposer.org/doc/).
 
-1. Instale via packagist 
-   - ```composer require pagseguro/magento2```
-       - Neste momento, podem ser solicitadas suas credenciais de autenticação do Magento. Caso tenha alguma dúvida, há uma descrição de como proceder nesse [link da documentação oficial](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/connect-auth.html).
+1. Adicione no composer.json 
+
+```json
+"require": {
+   "pagseguro/magento2": "^1.12.6"
+},
+"repositories": [
+  {
+    "type": "vcs",
+    "url": "https://github.com/ianitsky/pagseguro-magento2.git"
+  },
+],
+```
 2. Execute os comandos:
    - ```php bin/magento setup:upgrade```
    - ```php bin/magento setup:static-content:deploy``` ou ```php bin/magento setup:static-content:deploy pt_BR```, de acordo com as configurações da sua loja.
