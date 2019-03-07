@@ -91,6 +91,7 @@ class NotificationMethod
         $this->_library->setEnvironment();
         $this->_library->setCharset();
         $this->_library->setLog();
+        /** @var \PagSeguro\Parsers\Transaction\Response $transaction */
         $transaction = $this->getTransaction();
         $order = $this->_order->get(
             $this->_helperData->getReferenceDecryptOrderID(
@@ -103,10 +104,19 @@ class NotificationMethod
         );
 
         if (!$this->compareStatus($status, $order->getStatus())) {
-            $history = array (
-                'status' => $this->_history->setStatus($status),
-                'comment' => $this->_history->setComment('PagSeguro Notification')
-            );
+            $history = ['status' => $this->_history->setStatus($status)];
+            switch ($status) {
+                case 'pagseguro_cancelada':
+                    if ($transaction->getCancelationSource() === 'EXTERNAL') {
+                        $history['comment'] = $this->_history->setComment('Canceled by the financial institution');
+                            break;
+                    }
+                    $history['comment'] = $this->_history->setComment('Canceled by the pagseguro');
+                    break;
+                default:
+                    $history['comment'] = $this->_history->setComment('PagSeguro Notification');
+                    ;
+            }
             $transactionCode = $transaction->getCode();
             $orderId = $order->getId();
 
