@@ -377,7 +377,7 @@ var WS = {
             'Search' : function(url)
             {
                 jQuery.ajax( {
-                    url: url + '/pagseguro/transactions/request',
+                    url: url,
                     data: {
                         form_key: window.FORM_KEY,
                         date_begin: jQuery('#date_begin').val(),
@@ -401,7 +401,7 @@ var WS = {
                             response.payload.data.forEach(function(item){
                                 t.row.add( [
                                     item.date,
-                                    '<a href="' + url + '/sales/order/view/order_id/' + item.order_id + '/key/' + window.FORM_KEY + '" target="_blank">' + item.magento_id + '</a>',
+                                    '<a href="' + item.order_link + '" target="_blank">' + item.magento_id + '</a>',
                                     item.pagseguro_id,
                                     item.environment,
                                     item.magento_status,
@@ -412,7 +412,7 @@ var WS = {
                                 t.columns.adjust().draw(false);
                                 i++;
                             });
-                            jQuery('.loading-mask').css('display', 'none');
+                            jQuery('.loading-mask').hide();
                         } else {
                             //Alert
                             Modal.Load('Listar transações', 'Nenhum resultado para o filtro informado!.');
@@ -427,7 +427,7 @@ var WS = {
 
             'Details' : function (url, transaction_code, order) {
                 jQuery.ajax({
-                    url: url + '/pagseguro/transactions/transaction',
+                    url: url,
                     type: "POST",
                     data: {
                         form_key: window.FORM_KEY,

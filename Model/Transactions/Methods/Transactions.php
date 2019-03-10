@@ -32,6 +32,10 @@ use UOL\PagSeguro\Model\Transactions\Method;
  */
 class Transactions extends Method
 {
+    /**
+     * @var \Magento\Framework\UrlInterface
+     */
+    protected $urlBuilder;
 
     /**
      * @var integer
@@ -88,9 +92,13 @@ class Transactions extends Method
      */
     protected $_detailsTransactionByCode;
 
+    /**
+     * @var bool
+     */
     protected $_needConciliate = true;
 
-
+    /** Url Path */
+    const URL_PATH_MAGENTO_ORDER = 'sales/order/view';
 
     /**
      * Conciliation constructor.
@@ -104,17 +112,16 @@ class Transactions extends Method
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\ObjectManager\ContextInterface $context,
+        \Magento\Framework\App\RequestInterface $request,
+        \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Backend\Model\Session $session,
         \Magento\Sales\Model\Order $order,
         \UOL\PagSeguro\Helper\Library $library,
-        \UOL\PagSeguro\Helper\Crypt $crypt,
-        $idMagento = null,
-        $idPagseguro = null,
-        $dateBegin = null,
-        $dateEnd = null,
-        $status = null
+        \UOL\PagSeguro\Helper\Crypt $crypt
     ) {
+        /** @var  \Magento\Framework\UrlInterface context */
+        $this->urlBuilder = $urlBuilder;
         /** @var \Magento\Framework\App\Config\ScopeConfigInterface _scopeConfig */
         $this->_scopeConfig = $scopeConfigInterface;
         /** @var  \Magento\Framework\App\ResourceConnection _resource */
@@ -128,15 +135,16 @@ class Transactions extends Method
         /** @var \UOL\PagSeguro\Helper\Crypt _crypt */
         $this->_crypt = $crypt;
         /** @var int _idMagento */
-        $this->_idMagento = $idMagento;
+        $this->_idMagento = $request->getParam('id_magento');
         /** @var int _idPagseguro */
-        $this->_idPagseguro = $idPagseguro;
+        $this->_idPagseguro = $request->getParam('id_pagseguro');
         /** @var int _dateBegin */
-        $this->_dateBegin = $dateBegin;
+        $this->_dateBegin = $request->getParam('date_begin');
         /** @var int _dateEnd */
-        $this->_dateEnd = $dateEnd;
+        $this->_dateEnd = $request->getParam('date_end');
         /** @var int _status */
-        $this->_status = $status;
+        $this->_status = $request->getParam('status');
+
         /** @var \Magento\Sales\Model\ResourceModel\Grid _salesGrid */
         $this->_salesGrid = new \Magento\Sales\Model\ResourceModel\Grid(
             $context,
@@ -164,7 +172,8 @@ class Transactions extends Method
                     'pagseguro_id'   => $transaction['transaction_code'],
                     'environment'    => $transaction['environment'],
                     'magento_status' => $this->formatMagentoStatus($transaction['status'], $transaction['partially_refunded']),
-                    'order_id'       => $transaction['entity_id']
+                    'order_id'       => $transaction['entity_id'],
+                    'order_link'     => $this->urlBuilder->getUrl(self::URL_PATH_MAGENTO_ORDER, ['order_id' => $transaction['entity_id']])
                 );
             }
         }
@@ -180,7 +189,7 @@ class Transactions extends Method
      */
     public function execute($data) {
 
-        $this->getDetailsTransaction(str_replace('-', '', $data));
+        $this->getDetailsTransaction($data);
 
         if(!empty($this->_detailsTransactionByCode) && $this->_needConciliate){
             throw new \Exception('need to conciliate');
