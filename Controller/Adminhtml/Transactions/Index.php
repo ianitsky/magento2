@@ -57,7 +57,10 @@ class Index extends Pageable
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->prepend(__('Listar transações'));
-        $resultPage->getLayout()->getBlock('adminhtml.block.pagseguro.transactions.content')->setData('adminurl', $this->getAdminUrl());
+        $resultPage->getLayout()->getBlock('adminhtml.block.pagseguro.transactions.content')
+            ->setData('transactions_request_url', $this->getUrl('pagseguro/transactions/request'))
+            ->setData('transactions_transaction_url', $this->getUrl('pagseguro/transactions/transaction'))
+        ;
         return $resultPage;
     }
 
