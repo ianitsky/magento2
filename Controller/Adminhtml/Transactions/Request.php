@@ -24,7 +24,6 @@
 namespace UOL\PagSeguro\Controller\Adminhtml\Transactions;
 
 use UOL\PagSeguro\Controller\Ajaxable;
-use UOL\PagSeguro\Model\Transactions\Methods\Transactions;
 
 /**
  * Class Request
@@ -32,7 +31,10 @@ use UOL\PagSeguro\Model\Transactions\Methods\Transactions;
  */
 class Request extends Ajaxable
 {
-
+    /**
+     * @var \UOL\PagSeguro\Model\Transactions\Methods\Transactions
+     */
+    protected $transactions;
     /**
      * Request constructor.
      *
@@ -41,8 +43,10 @@ class Request extends Ajaxable
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
+        \UOL\PagSeguro\Model\Transactions\Methods\Transactions $transactions
     ) {
+        $this->transactions = $transactions;
         parent::__construct($context, $resultJsonFactory);
     }
 
@@ -51,23 +55,8 @@ class Request extends Ajaxable
      */
     public function execute()
     {
-        $transactions = new Transactions(
-            $this->_objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface'),
-            $this->_objectManager->create('Magento\Framework\App\ResourceConnection'),
-            $this->_objectManager->create('Magento\Framework\Model\ResourceModel\Db\Context'),
-            $this->_objectManager->create('Magento\Backend\Model\Session'),
-            $this->_objectManager->create('Magento\Sales\Model\Order'),
-            $this->_objectManager->create('UOL\PagSeguro\Helper\Library'),
-            $this->_objectManager->create('UOL\PagSeguro\Helper\Crypt'),
-            $this->getRequest()->getParam('id_magento'),
-            $this->getRequest()->getParam('id_pagseguro'),
-            $this->getRequest()->getParam('date_begin'),
-            $this->getRequest()->getParam('date_end'),
-            $this->getRequest()->getParam('status')
-        );
-
         try {
-            return $this->whenSuccess($transactions->request());
+            return $this->whenSuccess($this->transactions->request());
         } catch (\Exception $exception) {
             return $this->whenError($exception->getMessage());
         }

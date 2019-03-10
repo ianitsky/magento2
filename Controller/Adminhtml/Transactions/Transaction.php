@@ -32,7 +32,7 @@ use UOL\PagSeguro\Model\Transactions\Methods\Transactions;
  */
 class Transaction extends Ajaxable
 {
-    protected $transactionsFactory;
+    protected $transactions;
     /**
      * Transaction constructor.
      *
@@ -42,9 +42,9 @@ class Transaction extends Ajaxable
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
-        \UOL\PagSeguro\Model\Transactions\Methods\TransactionsFactory $transactionsFactory
+        \UOL\PagSeguro\Model\Transactions\Methods\Transactions $transactions
     ) {
-        $this->transactionsFactory = $transactionsFactory;
+        $this->transactions = $transactions;
         parent::__construct($context, $resultJsonFactory);
     }
 
@@ -53,11 +53,9 @@ class Transaction extends Ajaxable
      */
     public function execute()
     {
-        $transactions = $this->transactionsFactory->create();
-
         try {
             return $this->whenSuccess(
-                $transactions->execute(
+                $this->transactions->execute(
                     $this->getRequest()->getParam('transaction') )
             );
         } catch (\Exception $exception) {

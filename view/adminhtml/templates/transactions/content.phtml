@@ -70,7 +70,7 @@
 <input type="hidden" id="adminurl" data-target="<?=$this->getAdminurl(); ?>"/>
 <script type="text/javascript">
     require(["jquery", 'Magento_Ui/js/modal/confirm', "datatables", "public"],function($, confirmation) {
-        var url = jQuery('#adminurl').attr('data-target');
+        var url = '<?php echo $this->getTransactionsRequestUrl() ?>';
         
         jQuery(document).ready(function () {
             WS.Ajax.Transactions.Search(url);
@@ -143,7 +143,7 @@
         $('#pagseguro-datatable').on('click', 'a.link', function (e) {
             var transaction = jQuery(this).data('transaction');
             var order = jQuery(this).data('order');
-            WS.Ajax.Transactions.Details(url, transaction, order);
+            WS.Ajax.Transactions.Details('<?php echo $this->getTransactionsTransactionUrl() ?>', transaction, order);
         });
 
         function clearListDetails(){
