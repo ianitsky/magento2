@@ -68,14 +68,14 @@
 
         // Search button observer
         $('#conciliation-search').on('click', function(){
-            var url = $('#adminurl').attr('data-target');
+            var url = '<?php echo $this->getConciliationRequestUrl() ?>';
             WS.Ajax.Conciliation.Search(url);
         });
 
         // Conciliate button observer
         $('#conciliation-conciliate').on('click', function(){
             var url = $('#adminurl').attr('data-target');
-            WS.Ajax.Conciliation.Conciliate(url);
+            WS.Ajax.Conciliation.Conciliate('<?php echo $this->getConciliationConciliateUrl() ?>'');
         });
 
         // Check/Uncheck all checkboxes.

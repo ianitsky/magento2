@@ -84,6 +84,14 @@ class Conciliation extends Method
     protected $_crypt;
 
     /**
+     * @var \Magento\Framework\UrlInterface
+     */
+    protected $_urlBuilder;
+
+    /** Url Path */
+    const URL_PATH_MAGENTO_ORDER = 'sales/order/view';
+
+    /**
      * Conciliation constructor.
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface
@@ -96,11 +104,12 @@ class Conciliation extends Method
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfigInterface,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
+        \Magento\Framework\App\RequestInterface $request,
+        \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Backend\Model\Session $session,
         \Magento\Sales\Model\Order $order,
         \UOL\PagSeguro\Helper\Library $library,
-        \UOL\PagSeguro\Helper\Crypt $crypt,
-        $days = null
+        \UOL\PagSeguro\Helper\Crypt $crypt
     ) {
         /** @var \Magento\Framework\App\Config\ScopeConfigInterface _scopeConfig */
         $this->_scopeConfig = $scopeConfigInterface;
@@ -114,8 +123,10 @@ class Conciliation extends Method
         $this->_library = $library;
         /** @var \UOL\PagSeguro\Helper\Crypt _crypt */
         $this->_crypt = $crypt;
+        /** @var \Magento\Framework\UrlInterfac _urlBuilder */
+        $this->_urlBuilder = $urlBuilder;
         /** @var int _days */
-        $this->_days = $days;
+        $this->_days = $request->getParam('days');
         /** @var \Magento\Sales\Model\ResourceModel\Grid _salesGrid */
         $this->_salesGrid = new \Magento\Sales\Model\ResourceModel\Grid(
             $context,
@@ -231,7 +242,8 @@ class Conciliation extends Method
             'pagseguro_id'     => $payment->getCode(),
             'pagseguro_status' => $this->formatPagSeguroStatus($payment),
             'order_id'         => $order->getId(),
-            'details'          => $this->details($order, $payment)
+            'details'          => $this->details($order, $payment),
+            'order_link'       => $this->_urlBuilder->getUrl(self::URL_PATH_MAGENTO_ORDER, ['order_id' => $order->getId()])
         ];
     }
 
