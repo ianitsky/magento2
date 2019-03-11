@@ -58,7 +58,9 @@ class Index extends Pageable
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->_resultPageFactory->create();
         $resultPage->getConfig()->getTitle()->prepend(__('Conciliação'));
-        $resultPage->getLayout()->getBlock('adminhtml.block.pagseguro.conciliation.content')->setData('adminurl', $this->getAdminUrl());
+        $resultPage->getLayout()->getBlock('adminhtml.block.pagseguro.conciliation.content')
+            ->setData('conciliation_request_url', $this->getUrl('pagseguro/conciliation/request'))
+            ->setData('conciliation_conciliate_url', $this->getUrl('pagseguro/conciliation/conciliate'));
         return $resultPage;
     }
 

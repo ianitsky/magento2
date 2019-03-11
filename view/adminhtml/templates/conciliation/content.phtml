@@ -74,8 +74,8 @@
 
         // Conciliate button observer
         $('#conciliation-conciliate').on('click', function(){
-            var url = $('#adminurl').attr('data-target');
-            WS.Ajax.Conciliation.Conciliate('<?php echo $this->getConciliationConciliateUrl() ?>'');
+            var url = '<?php echo $this->getConciliationConciliateUrl() ?>';
+            WS.Ajax.Conciliation.Conciliate(url);
         });
 
         // Check/Uncheck all checkboxes.
