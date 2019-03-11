@@ -7,7 +7,7 @@
 	],
 	"require": {
 	    "php": ">=5.5",
-	    "pagseguro/pagseguro-php-sdk": "5.*"
+	    "pagseguro/pagseguro-php-sdk": "6.*"
 	},
 	"autoload": {
 	  "files": [

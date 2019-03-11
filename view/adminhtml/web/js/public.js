@@ -32,7 +32,7 @@ var WS = {
             'Search' : function(url)
             {
                 jQuery.ajax( {
-                    url: url + '/pagseguro/conciliation/request',
+                    url: url,
                     data: {form_key: window.FORM_KEY, days: jQuery('#conciliation-days').val()},
                     type: 'POST',
                     showLoader: true,
@@ -56,7 +56,7 @@ var WS = {
                                     item.pagseguro_id,
                                     item.magento_status,
                                     item.pagseguro_status,
-                                    '<a href="'+url+'/sales/order/view/order_id/'+item.order_id+'/key/'+window.FORM_KEY+'" target="_blank">Ver detalhes</a>'
+                                    '<a href="'+item.order_link+'" target="_blank">Ver detalhes</a>'
                                 ] );
                                 //Adjust column width
                                 t.columns.adjust().draw(false);
@@ -89,7 +89,7 @@ var WS = {
                 });
 
                 jQuery.ajax( {
-                    url: url + '/pagseguro/conciliation/conciliate',
+                    url: url,
                     data: {form_key: window.FORM_KEY, data: data},
                     type: 'POST',
                     showLoader: true,
