@@ -33,7 +33,7 @@ use UOL\PagSeguro\Model\Transactions\Methods\Conciliation;
  */
 class Request extends Ajaxable
 {
-
+    protected $conciliation;
     /**
      * Request constructor.
      *
@@ -42,8 +42,10 @@ class Request extends Ajaxable
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory
+        \Magento\Framework\Controller\Result\JsonFactory $resultJsonFactory,
+        \UOL\PagSeguro\Model\Transactions\Methods\Conciliation $conciliation
     ) {
+        $this->conciliation = $conciliation;
         parent::__construct($context, $resultJsonFactory);
     }
 
@@ -54,18 +56,8 @@ class Request extends Ajaxable
      */
     public function execute()
     {
-        $conciliation = new Conciliation(
-            $this->_objectManager->create('Magento\Framework\App\Config\ScopeConfigInterface'),
-            $this->_objectManager->create('\Magento\Framework\App\ResourceConnection'),
-            $this->_objectManager->create('Magento\Framework\Model\ResourceModel\Db\Context'),
-            $this->_objectManager->create('Magento\Backend\Model\Session'),
-            $this->_objectManager->create('Magento\Sales\Model\Order'),
-            $this->_objectManager->create('UOL\PagSeguro\Helper\Library'),
-            $this->_objectManager->create('UOL\PagSeguro\Helper\Crypt'),
-            $this->getRequest()->getParam('days')
-        );
         try {
-            return $this->whenSuccess($conciliation->request());
+            return $this->whenSuccess($this->conciliation->request());
         } catch (\Exception $exception) {
             return $this->whenError($exception->getMessage());
         }
