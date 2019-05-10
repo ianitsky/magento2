@@ -19,7 +19,7 @@
 	},
 	"repositories": [
 		{
-			"type": "git",
+			"type": "vcs",
 			"url": "https://github.com/ianitsky/pagseguro-php-sdk.git"
 		}
 	]
